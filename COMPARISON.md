@@ -1,25 +1,29 @@
-# 窄场景比较：不要把不同中文店名当成格式差异
+# A Narrow Comparison: Preserve Differences Between Chinese Store Names
 
-直接对照：[Citewatch / local-seo-citation-tracker-mvp](https://github.com/bensblueprints/local-seo-citation-tracker-mvp)。固定提交 `dfb6f5df5e1ff190bd33378ac772c010f0f433bd`，检查日期2026-11-16。
+Direct baseline: [Citewatch / local-seo-citation-tracker-mvp](https://github.com/bensblueprints/local-seo-citation-tracker-mvp), fixed commit `dfb6f5df5e1ff190bd33378ac772c010f0f433bd`. Reviewed on 2026-11-16.
 
-## 同一输入
+## Identical inputs
 
-| 字段 | 基准 | 观察值 | 本工具实测 |
-|---|---|---|---|
-| 店名 | 青山书店 | 海岸书店 | different，待核对 |
-| 地址 | 青山路1号 | 海岸路1号 | different，待核对 |
-| 电话格式 | 010-00000000 | ０１０－００００００００ | 仅格式差异，不列为待整改 |
+The Chinese strings below are intentionally preserved as input examples, because the distinction being checked depends on their characters.
 
-本项目保留中文字符，仅做 Unicode NFKC 和有限空白规范化；电话额外忽略空格、英文括号与短横线。内部自动测试已验证上述结果。
+| Field | Baseline | Observed | Our executed result |
+| --- | --- | --- | --- |
+| Store name | 青山书店 | 海岸书店 | `different`, needs review |
+| Address | 青山路1号 | 海岸路1号 | `different`, needs review |
+| Phone formatting | 010-00000000 | ０１０－００００００００ | Formatting only, not an unresolved action |
 
-[对方固定版本的 normalize.js](https://github.com/bensblueprints/local-seo-citation-tracker-mvp/blob/dfb6f5df5e1ff190bd33378ac772c010f0f433bd/server/normalize.js) 中，名称规范化只保留英文、数字、空白和单引号；地址规范化也删除中文。因此上述两店名均变成空串，两地址均只剩数字1。其 compareField 在原串不相同时，若规范化结果相同，会返回 formatting。
+Our implementation preserves Chinese characters and applies Unicode NFKC plus limited whitespace normalization. Phone comparison additionally ignores spaces, ASCII parentheses, and hyphens. Internal automated tests verified these results.
 
-**可支持的结论：** 相比这个固定版本，本工具在上述中文店名/地址场景能保留需要人工复核的差异。不能据此认为哪份资料一定错误。
+The competitor's [fixed normalize.js](https://github.com/bensblueprints/local-seo-citation-tracker-mvp/blob/dfb6f5df5e1ff190bd33378ac772c010f0f433bd/server/normalize.js) retains only English letters, digits, whitespace, and apostrophes for names; its address normalization also removes Chinese characters. Both names above therefore become empty strings, and both addresses retain only the digit `1`. When original values differ but normalized values match, its `compareField` returns `formatting`.
 
-## 证据边界与不足
+**Supported conclusion:** compared with that fixed version, this tool preserves the differences requiring human review in these Chinese-name/address cases. This does not establish which record is correct.
 
-本工具执行了自编测试；对方为固定源代码路径检查，未运行整个 Electron/Express 应用，未做速度或完整功能横测。这里不是“整体更强”或“行业唯一”的证明。
+## Evidence limits and missing capabilities
 
-Citewatch 已支持多商家、目录模板、自动任务和可选平台接入，本工具没有这些完整能力。我们的范围是一家门店的手动多来源复查、中文字符保留、证据日期、例外复核记录、项目恢复和CSV清单。美国地址缩写、营业时间语义等价、国际电话号码、网站重定向不自动推断，可能增加人工复核。
+Our tool executed original test cases. The competitor comparison is a fixed source-path review, not a run of its entire Electron/Express application. There was no speed or complete-feature benchmark. This is not proof of overall superiority or uniqueness.
 
-未验证任何排名、AI可见度、商业效果或付费需求。不运行微信接口，不抓取第三方数据，不自动修改平台资料。
+Citewatch already supports multiple businesses, directory templates, automated tasks, and optional platform integrations. This tool does not reproduce that full feature set. Its scope is manual, multi-source review for one store: Chinese character preservation, evidence dates, documented exceptions, recoverable projects, and CSV action lists.
+
+US address abbreviations, equivalent opening hours, international phone numbers, and website redirects are not inferred. This may increase manual review.
+
+No search-ranking, AI-visibility, business-outcome, or paid-demand claim has been validated. The tool uses no WeChat API, scrapes no third-party data, and does not modify platform information.

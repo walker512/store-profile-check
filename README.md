@@ -1,49 +1,60 @@
-# StoreProof · 门店资料复查台
+# StoreProof
 
-中文、零依赖、无 API 密钥的离线资料复查工具，MIT，实验性 v0.2。将你手工收集的门店资料与自己确认的基准逐字段核对，保存证据、日期与复核说明。
+## Store Profile Consistency Checker
 
-**不是微信/小微平台检测器，不代表搜索排名、AI可见度或真实线上现状。** 不联网，不自动抓取、修改或验证平台资料；不同不一定错误，核对基准也不是认证事实。
+An experimental v0.2 offline tool for manually reviewing store information. Compare collected records field by field against a baseline you have checked, while retaining evidence, dates, and review notes. No dependencies or API keys. The application interface remains in Simplified Chinese. MIT licensed.
 
-## 本地启动
+**This is not a WeChat or Xiaowei platform scanner, a search-ranking monitor, or an AI-visibility measurement tool.** It does not connect to platforms, scrape, edit, or verify live listings. A difference is not necessarily an error, and your baseline is not certified fact.
 
-下载整个仓库ZIP并解压。在含 `index.html` 的目录打开终端：
+## Start locally
+
+Download and extract the complete repository ZIP. In the directory containing `index.html`, run:
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Windows 安装了 Python Launcher 时可使用 `py -3 -m http.server 8000 --bind 127.0.0.1`。浏览器打开 `http://127.0.0.1:8000`，用完 Ctrl+C 停止。不要在含私人文件的上层目录运行服务器。Python只是本地静态页面服务，无付费接口或账号要求。
+On Windows with Python Launcher installed, use `py -3 -m http.server 8000 --bind 127.0.0.1`. Open `http://127.0.0.1:8000`; stop the server with Ctrl+C when finished. Do not serve a parent directory containing private files. Python only serves local static files; no paid endpoint or account is required.
 
-已使用下载 ZIP 解压后的文件，在云电脑真实 Chromium 通过 localhost 验收。`file:///` 双击方式未验证。
+A downloaded and extracted copy has been tested in real Chromium over localhost on the cloud computer. Direct `file:///` opening has not been verified.
 
-## 一次完整工作流
+## Complete a review
 
-1. 首次打开已有空白表单。填写分析日期、复查间隔（1至365天）和你确认的门店基准。
-2. 为每个来源填写唯一名称、人工检查日期、证据网址或说明，以及观察到的五个字段。证据仅作为文本保存，不自动打开。
-3. 点击生成报告。检查“缺失/不同”、过期来源及各字段原文，不直接把结果当作平台事实。
-4. 若已人工核实某差异是合理例外，可填写原因并记录。例外仍显示并进入CSV，**不会假装已修改平台**。基准、观察值或更新的检查日期发生变化后，旧复核失效。
-5. 下载CSV整改清单或JSON报告；点击保存项目可保存全部输入及复核历史，以后从本地文件恢复。报告不是项目文件，不能作为项目恢复。
+1. Start with the blank form. Enter an analysis date, review interval (1-365 days), and the store baseline you have checked.
+2. For each source, enter a unique name, manual observation date, evidence URL or note, and the five observed fields. Evidence is stored as text and is not opened automatically.
+3. Generate the report. Review missing or different values, stale sources, and the original field text. Do not treat the report as verified platform facts.
+4. If you manually confirm a difference is an acceptable exception, record the reason. The exception remains visible and is included in CSV; **it does not pretend the platform was changed**. A change to the baseline, observed value, or observation date invalidates the earlier review.
+5. Download a CSV action list or JSON report. Save a project to preserve all inputs and review history for later restoration. A report is not a recoverable project file.
 
-新建和加载示例会替换未保存输入，请先保存。关闭页面会丢弃未保存数据。示例全部虚构。
+Creating a new project or loading an example replaces unsaved input. Save first. Closing the page discards unsaved data. All examples are fictional.
 
-## 规则和边界
+## Rules and boundaries
 
-- 字段：店名、地址、电话、营业时间、官网。
-- 保留中文；Unicode NFKC、首尾空白及重复空白规范化。电话额外忽略空格、英文括号和短横线。
-- 不推断国家码、美国地址缩写、营业时间等价、网站重定向或简繁别名。格式不同可能仍需要人判断。
-- 资料缺失明确标记；全空/缺失的基准不允许计算，避免把“不知道”当作正确。
-- 复查到期依据手填分析日与观察日的天数差；不在后台自动提醒。
-- 只支持一家门店、最多200来源、每字段500字符、最多1000复核历史。项目保存/恢复统一500000 UTF-8字节，保存前校验最终完整文件大小；中文通常多字节。
-- 导出CSV对公式前缀加单引号，防止表格程序执行输入内容；JSON项目保留原始文本。HTML按文本显示。
+- Fields: store name, address, phone number, opening hours, and website.
+- Chinese characters are preserved. Normalization uses Unicode NFKC, trims surrounding whitespace, and collapses repeated whitespace. Phone comparison additionally ignores spaces, ASCII parentheses, and hyphens.
+- Country codes, US address abbreviations, equivalent opening hours, redirects, and Simplified/Traditional aliases are not inferred. Formatting differences may still need human judgment.
+- Missing data is explicitly marked. A missing or entirely blank baseline cannot produce a report, so unknown information is not silently treated as correct.
+- Review age is calculated from the manually entered analysis and observation dates. There are no background reminders.
+- One store per project; at most 200 sources, 500 characters per field, and 1,000 review-history records.
+- Project save and restore share a **500,000 UTF-8 byte** limit. Saving checks the complete serialized file. Non-ASCII characters commonly use multiple bytes.
+- CSV export prefixes formula-like text with an apostrophe to reduce spreadsheet formula execution. JSON projects preserve the original text. HTML-like input is displayed as text.
 
-## 隐私
+## Privacy
 
-无网络请求、追踪、自动本地持久化或第三方依赖。只读取你选中的项目文件，下载由你触发。项目、报告和CSV可能包含经营资料，需妥善保管；不要往公开Issue上传私人信息或客户原件。
+No network requests, tracking, automatic local persistence, or third-party dependencies. Only selected project files are read; you trigger downloads. Projects, reports, and CSV files may contain business information. Store them securely and do not upload private records or original customer files to public issues.
 
-## 检验状态
+## Verification
 
-内部63项自动测试通过，包含核心规则、中文字符、日期、复核失效、UTF-8边界，以及19项最小DOM流程模拟。模拟测试不是浏览器验收。公开发布包不含测试脚本或专用测试夹具。已下载 ZIP 并解压，在云电脑真实 Chromium 通过 localhost 完成中文多平台资料差异检查、复核变更失效、保存后关闭并恢复、CSV及报告下载，以及1180px/400px布局验收。`file:///` 双击、实体手机和其他浏览器未验证；400px属于浏览器窄屏检查，不是实体手机测试。
+**63 internal automated tests passed**, covering rules, Chinese text, dates, invalidated reviews, UTF-8 boundaries, and 19 minimal-DOM workflow simulations. Simulated tests are not browser acceptance. Test scripts and dedicated fixtures are not included in the public package.
 
-## 比较和贡献
+A ZIP was downloaded and extracted, then tested in real Chromium over localhost on the cloud computer. Checks covered Chinese information across multiple sources, invalidation after reviewed data changed, saving followed by closing and restoring, CSV/report downloads, and 1180 px / 400 px layouts.
 
-见 `COMPARISON.md`：对固定开源竞品源码的中文字符场景比较，不宣称整体领先。欢迎用脱敏最小例子报告误报和边界；请勿加入API密钥要求、遥测或未经验证的排名承诺。
+Direct `file:///` opening, physical phones, and other browsers remain unverified. The 400 px check is a narrow browser window, not a physical-phone test.
+
+## Comparison, contributions, and license
+
+[COMPARISON.md](COMPARISON.md) describes a Chinese-character scenario using the source code of a fixed competitor version. It is not a claim of overall superiority or a complete side-by-side application benchmark.
+
+Report false positives and edge cases with redacted minimal examples. Do not add API-key requirements, telemetry, or unverified ranking promises.
+
+MIT; see [LICENSE](LICENSE).
